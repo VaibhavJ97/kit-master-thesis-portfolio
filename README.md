@@ -135,13 +135,3 @@ The project generates:
 You can also export map results as `.html` files for direct viewing in a browser.
 
 ---
-
-## Example Visual Outputs
-
-Add screenshots here from your generated maps.
-
-Example:
-
-```md
-![SSP245 Map Preview](outputs/images/preview_1.png)
-![SSP585 Map Preview](outputs/images/preview_2.png)
