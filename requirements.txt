@@ -1,0 +1,9 @@
+numpy
+matplotlib
+rasterio
+scipy
+joblib
+folium
+geopandas
+jupyter
+ipython
