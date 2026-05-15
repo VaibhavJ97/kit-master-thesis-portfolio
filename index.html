@@ -28,6 +28,7 @@
   --accent-soft: #e8d4cb;
   --line: #d9cfc2;
   --line-soft: #e8e0d3;
+  --bg-alt: #f1ebe1;
 }
 
 * { box-sizing: border-box; }
@@ -214,6 +215,57 @@ footer {
 /* ============================================================
    THESIS-SPECIFIC STYLES (below)
    ============================================================ */
+
+/* ============ GENERIC SECTION HEADER (used by #findings, #methods, #explorer) ============ */
+.section-header {
+  max-width: 1400px;
+  margin: 0 auto 40px;
+  padding: 0 40px;
+}
+.section-header > .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-header > .eyebrow::before {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+.section-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400;
+  margin-bottom: 14px;
+}
+.section-header h2 em {
+  font-style: italic;
+  color: var(--accent-deep);
+  font-weight: 300;
+}
+.section-header > p {
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+  max-width: 720px;
+  line-height: 1.7;
+}
+
+/* Section wrappers (findings + methods need top/bottom padding) */
+#findings { padding: 80px 0 0; }
+#methods  { padding: 80px 0 60px; }
+
+@media (max-width: 720px) {
+  .section-header { padding: 0 20px; margin-bottom: 28px; }
+  #findings { padding: 50px 0 0; }
+  #methods  { padding: 50px 0 40px; }
+}
+
 /* ============ THESIS HERO ============ */
 .thesis-hero {
   min-height: 70vh;
@@ -379,8 +431,17 @@ footer {
   background: var(--paper);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  padding: 80px 0;
 }
-.abstract-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start; }
+.abstract-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  align-items: start;
+}
 .abstract-grid .label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
@@ -395,7 +456,8 @@ footer {
   margin: 8px 12px 0 0; color: var(--accent); font-weight: 600;
 }
 @media (max-width: 720px) {
-  .abstract-grid { grid-template-columns: 1fr; gap: 24px; }
+  .abstract-section { padding: 50px 0; }
+  .abstract-grid { grid-template-columns: 1fr; gap: 24px; padding: 0 20px; }
   .abstract-text { font-size: 1.1rem; }
 }
 
@@ -942,7 +1004,7 @@ footer {
 </section>
 
 <!-- ============ KEY FINDINGS ============ -->
-<section id="findings" style="padding-top: 60px;">
+<section id="findings">
   <div class="section-header">
     <div class="eyebrow">§ 03 - Key results</div>
     <h2>Warming substantially boosts <em>geothermal yield</em>.</h2>
