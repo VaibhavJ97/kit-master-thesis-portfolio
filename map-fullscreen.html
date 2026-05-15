@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Live Map Explorer (Fullscreen) - Vaibhav Jaiswal</title>
+<meta name="description" content="Fullscreen view of the BHE thesis map explorer." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #faf7f2;
+  --bg-alt: #f1ebe1;
+  --paper: #fffdf9;
+  --ink: #1a1612;
+  --ink-soft: #4a423a;
+  --ink-faint: #8a7f72;
+  --line: #d8cfc1;
+  --accent: #b8501e;
+  --accent-deep: #7a2e10;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Top bar */
+.topbar-fs {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 1000;
+  gap: 24px;
+}
+.topbar-fs .brand {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.topbar-fs .brand span { color: var(--accent); font-style: italic; font-weight: 400; }
+.topbar-fs .page-title {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  margin-left: auto;
+}
+.topbar-fs .close-btn {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 8px 16px;
+  border-radius: 2px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.topbar-fs .close-btn:hover { background: var(--accent); }
+
+/* Layout */
+.fs-layout {
+  position: fixed;
+  top: 56px;
+  left: 0; right: 0; bottom: 0;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+}
+
+.fs-sidebar {
+  background: var(--paper);
+  border-right: 1px solid var(--line);
+  padding: 24px 24px 60px;
+  overflow-y: auto;
+}
+.fs-sidebar h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.fs-sidebar h1 em {
+  color: var(--accent-deep);
+  font-style: italic;
+  font-weight: 300;
+}
+.fs-sidebar .lead {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* Mode tabs */
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.mode-tab {
+  background: var(--bg);
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  transition: all 0.2s;
+  border-right: 1px solid var(--line);
+}
+.mode-tab:last-child { border-right: none; }
+.mode-tab:hover { color: var(--ink); background: var(--bg-alt); }
+.mode-tab.active { background: var(--ink); color: var(--bg); font-weight: 500; }
+.mode-tab small {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.7;
+  margin-top: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+/* Controls */
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.control-group select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231a1612' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.control-group select:hover { border-color: var(--ink); }
+.control-group select:focus { outline: none; border-color: var(--accent); }
+
+/* Layer toggles */
+.layer-toggles {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 14px;
+  margin-top: 16px;
+}
+.layer-toggles h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.layer-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 0.82rem;
+  border-bottom: 1px dashed var(--line);
+  cursor: pointer;
+  user-select: none;
+}
+.layer-toggle:last-child { border-bottom: none; }
+.layer-toggle input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.layer-toggle .swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.layer-toggle .name {
+  color: var(--ink-soft);
+  line-height: 1.3;
+  flex: 1;
+}
+.layer-toggle:hover .name { color: var(--ink); }
+
+/* Mini legends */
+.legend-mini {
+  margin-top: 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+}
+.legend-mini h5 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.legend-mini .bar { height: 12px; border-radius: 2px; margin-bottom: 4px; }
+.legend-mini .vals {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-soft);
+}
+
+/* Source card */
+.source-card {
+  margin-top: 18px;
+  padding: 14px;
+  background: var(--ink);
+  color: var(--bg);
+}
+.source-card p {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: rgba(250,247,242,0.8);
+}
+.source-card a { color: #ff8a4f; }
+
+/* Map */
+.fs-map-area {
+  position: relative;
+  background: var(--bg-alt);
+  overflow: hidden;
+}
+#map { width: 100%; height: 100%; }
+
+.map-title-overlay {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  background: rgba(255,255,255,0.92);
+  padding: 8px 18px;
+  border: 1px solid var(--line);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  border-radius: 2px;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(250, 247, 242, 0.94);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.loading-overlay.active { opacity: 1; pointer-events: all; }
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+}
+
+.empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: var(--bg);
+  z-index: 999;
+}
+.empty-state.hidden { display: none; }
+.empty-state .inner { max-width: 540px; text-align: center; }
+.empty-state h2 { font-size: 1.6rem; margin-bottom: 14px; font-weight: 400; }
+.empty-state h2 em { color: var(--accent-deep); font-style: italic; font-weight: 300; }
+.empty-state p { color: var(--ink-soft); line-height: 1.7; margin-bottom: 14px; font-size: 0.94rem; }
+
+.leaflet-image-layer {
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: crisp-edges !important;
+}
+
+.leaflet-popup-content {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+}
+.leaflet-popup-content .popup-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: var(--accent-deep);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .fs-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .fs-sidebar { max-height: 50vh; padding: 16px; }
+  body { overflow: auto; height: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar-fs">
+  <a href="../index.html" class="brand">Vaibhav <span>Jaiswal</span></a>
+  <span class="page-title">Map Explorer · Fullscreen</span>
+  <a href="index.html" class="close-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+    Back to thesis
+  </a>
+</header>
+
+<div class="fs-layout">
+  <aside class="fs-sidebar">
+    <h1>Map <em>explorer</em></h1>
+    <p class="lead">Real BHE simulation output. Switch models, scenarios, colormaps, toggle layers - all instant.</p>
+
+    <div class="mode-tabs">
+      <div class="mode-tab active" data-mode="individual">
+        Individual<small>1 of 8</small>
+      </div>
+      <div class="mode-tab" data-mode="ensemble">
+        Ensemble<small>8-model</small>
+      </div>
+    </div>
+
+    <div id="individual-controls">
+      <div class="control-group">
+        <label for="model-select">Climate Model (GCM)</label>
+        <select id="model-select">
+          <option value="BBC">BBC</option>
+          <option value="CanESM" selected>CanESM</option>
+          <option value="GFDL">GFDL</option>
+          <option value="GISS">GISS</option>
+          <option value="HadGEM">HadGEM</option>
+          <option value="IPSL">IPSL</option>
+          <option value="MIROC">MIROC</option>
+          <option value="MPI">MPI</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="scenario-individual">Climate Scenario (SSP)</label>
+        <select id="scenario-individual">
+          <option value="ssp245" selected>SSP 2-4.5 (modest mitigation)</option>
+          <option value="ssp585">SSP 5-8.5 (high emissions)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="ensemble-controls" style="display:none;">
+      <div class="control-group">
+        <label for="stat-select">Ensemble Statistic</label>
+        <select id="stat-select">
+          <option value="mean" selected>Mean (μ)</option>
+          <option value="p25">25th Percentile</option>
+          <option value="p50">Median (P50)</option>
+          <option value="p75">75th Percentile</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="scenario-ensemble">Climate Scenario (SSP)</label>
+        <select id="scenario-ensemble">
+          <option value="ssp245" selected>SSP 2-4.5 (modest mitigation)</option>
+          <option value="ssp585">SSP 5-8.5 (high emissions)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label for="cmap-heat">Heat Extraction Colormap</label>
+      <select id="cmap-heat">
+        <option value="viridis" selected>Viridis (default)</option>
+        <option value="plasma">Plasma</option>
+        <option value="inferno">Inferno</option>
+        <option value="magma">Magma</option>
+        <option value="cividis">Cividis</option>
+        <option value="turbo">Turbo</option>
+        <option value="ylgnbu">YlGnBu</option>
+        <option value="bugn">BuGn</option>
+        <option value="coolwarm">Coolwarm</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="cmap-power">Usable Power Colormap</label>
+      <select id="cmap-power">
+        <option value="reds" selected>Reds (default)</option>
+        <option value="oranges">Oranges</option>
+        <option value="ylorrd">YlOrRd</option>
+        <option value="purd">PuRd</option>
+        <option value="hot">Hot</option>
+        <option value="autumn">Autumn</option>
+        <option value="copper">Copper</option>
+      </select>
+    </div>
+
+    <div class="layer-toggles">
+      <h4>Toggleable Layers</h4>
+      <label class="layer-toggle">
+        <input type="checkbox" data-layer="ql_Urban_50yr" checked>
+        <span class="swatch swatch-heat"></span>
+        <span class="name">Max Heat Extraction Rate (50yr)</span>
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" data-layer="EnerUrb_50yr">
+        <span class="swatch swatch-power"></span>
+        <span class="name">Usable Power (50yr)</span>
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" data-layer="ql_UrbanRenew_50yr">
+        <span class="swatch swatch-heat"></span>
+        <span class="name">Sustainable Heat Extraction Rate (50yr)</span>
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" data-layer="EnerUrbRenew_50yr">
+        <span class="swatch swatch-power"></span>
+        <span class="name">Usable Power non-renewable</span>
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" data-layer="ql_UrbanRenew_max_100yr">
+        <span class="swatch swatch-heat"></span>
+        <span class="name">Max Sustainable Heat Extraction Rate (100yr)</span>
+      </label>
+      <label class="layer-toggle">
+        <input type="checkbox" data-layer="EnerUrbRenew_100yr">
+        <span class="swatch swatch-power"></span>
+        <span class="name">Usable Power renewable (100yr)</span>
+      </label>
+    </div>
+
+    <div class="legend-mini">
+      <h5>Heat Extraction Rate (W/m)</h5>
+      <div class="bar" id="legend-bar-heat"></div>
+      <div class="vals"><span>2</span><span>14</span><span>27</span><span>41</span><span>55</span></div>
+    </div>
+    <div class="legend-mini">
+      <h5>Usable Power (W)</h5>
+      <div class="bar" id="legend-bar-power"></div>
+      <div class="vals"><span>100</span><span>1575</span><span>3050</span><span>4525</span><span>6000</span></div>
+    </div>
+
+    <div class="source-card">
+      <p><strong>Tip:</strong> Click anywhere on the map to see exact values at that point.<br><br>
+      <strong>Source:</strong> <a href="https://github.com/VaibhavJ97/VaibhavJ97.github.io" target="_blank">GitHub repo</a> · <a href="../files/Single_BHE_Analysis_GEE_CMIP6_Folium.ipynb" target="_blank">Notebook</a></p>
+    </div>
+  </aside>
+
+  <div class="fs-map-area">
+    <div class="map-title-overlay" id="map-title">Loading...</div>
+    <div id="map"></div>
+    <div class="loading-overlay" id="loader">
+      <div class="spinner"></div>
+      <span id="loader-text">Loading data...</span>
+    </div>
+    <div class="empty-state hidden" id="empty-state">
+      <div class="inner">
+        <h2>Data not yet <em>exported</em>.</h2>
+        <p>The data_json folder is missing or has wrong path.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/chroma-js@2.4.2/chroma.min.js"></script>
+
+<script>
+const DATA_BASE = 'data_json';
+
+const COLORMAPS = {
+  viridis: ['#440154','#482878','#3e4a89','#31688e','#26828e','#1f9e89','#35b779','#6dcd59','#b4dd2c','#fde725'],
+  plasma:  ['#0d0887','#41049d','#6a00a8','#8f0da4','#b12a90','#cb4679','#e16462','#f1834b','#fca636','#fcce25','#f0f921'],
+  inferno: ['#000004','#1b0c41','#4a0c6b','#781c6d','#a52c60','#cf4446','#ed6925','#fb9a06','#f7d13d','#fcffa4'],
+  magma:   ['#000004','#1c1044','#4f127b','#812581','#b5367a','#e55c30','#fb8761','#fec287','#fcfdbf'],
+  cividis: ['#00224e','#123570','#3b496c','#575d6d','#707173','#8a8678','#a59c74','#c3b369','#e1cc55','#fee838'],
+  turbo:   ['#30123b','#4145ab','#4675ed','#39a2fc','#1bcfd4','#24eca6','#61fc6c','#a4fc3b','#d1e834','#f3c63a','#fe9b2d','#f36315','#d93806','#a91201','#7a0403'],
+  ylgnbu:  ['#ffffd9','#edf8b1','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#253494','#081d58'],
+  bugn:    ['#f7fcfd','#e5f5f9','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#006d2c','#00441b'],
+  coolwarm:['#3b4cc0','#688aef','#99baff','#c9d8ef','#edd1c2','#f7a889','#e36a53','#b40426'],
+  reds:    ['#fff5f0','#fee0d2','#fcbba1','#fc9272','#fb6a4a','#ef3b2c','#cb181d','#a50f15','#67000d'],
+  oranges: ['#fff5eb','#fee6ce','#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#a63603','#7f2704'],
+  ylorrd:  ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
+  purd:    ['#f7f4f9','#e7e1ef','#d4b9da','#c994c7','#df65b0','#e7298a','#ce1256','#980043','#67001f'],
+  hot:     ['#0b0000','#430000','#7c0000','#b40000','#ee0000','#ff3a00','#ff7400','#ffae00','#ffe800','#ffff5d','#ffffd6'],
+  autumn:  ['#ff0000','#ff2a00','#ff5500','#ff8000','#ffaa00','#ffd500','#ffff00'],
+  copper:  ['#000000','#28150d','#502a1c','#783f2a','#a05538','#c86b46','#f08055','#ff9663']
+};
+
+const RANGES = {
+  heat:  { min: 2, max: 55 },
+  power: { min: 100, max: 6000 }
+};
+
+let currentMode = 'individual';
+let currentData = null;
+let activeLayers = new Set(['ql_Urban_50yr']);
+let leafletLayers = {};
+let currentColormaps = { heat: 'viridis', power: 'reds' };
+
+const map = L.map('map', {
+  center: [51.0, 10.4],
+  zoom: 6,
+  minZoom: 5, maxZoom: 12
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+let germanyLayer = null;
+async function loadGermanyBoundary() {
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+    const data = await r.json();
+    const germany = data.features.find(f =>
+      f.properties.ADMIN === 'Germany' || f.properties.NAME === 'Germany' || f.properties.name === 'Germany'
+    );
+    if (germany) {
+      germanyLayer = L.geoJSON(germany, {
+        style: { color: '#1a1612', weight: 2.5, fill: false, opacity: 0.9 },
+        interactive: false
+      }).addTo(map);
+    }
+  } catch (e) { console.warn('Germany boundary not loaded:', e); }
+}
+
+function renderArrayToImageURL(arr2d, layerType) {
+  const rows = arr2d.length;
+  const cols = arr2d[0].length;
+  const cmapName = currentColormaps[layerType];
+  const colors = COLORMAPS[cmapName];
+  const range = RANGES[layerType];
+  const scale = chroma.scale(colors).domain([range.min, range.max]);
+  
+  const smallCanvas = document.createElement('canvas');
+  smallCanvas.width = cols;
+  smallCanvas.height = rows;
+  const sCtx = smallCanvas.getContext('2d');
+  const imgData = sCtx.createImageData(cols, rows);
+  
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const v = arr2d[y][x];
+      const idx = (y * cols + x) * 4;
+      if (v === null || v === undefined || Number.isNaN(v) || !Number.isFinite(v)) {
+        imgData.data[idx] = 0; imgData.data[idx + 1] = 0; imgData.data[idx + 2] = 0; imgData.data[idx + 3] = 0;
+      } else {
+        const c = scale(v).rgb();
+        imgData.data[idx] = c[0]; imgData.data[idx + 1] = c[1]; imgData.data[idx + 2] = c[2]; imgData.data[idx + 3] = 200;
+      }
+    }
+  }
+  sCtx.putImageData(imgData, 0, 0);
+  
+  const SCALE = 50;
+  const bigCanvas = document.createElement('canvas');
+  bigCanvas.width = cols * SCALE;
+  bigCanvas.height = rows * SCALE;
+  const bCtx = bigCanvas.getContext('2d');
+  bCtx.imageSmoothingEnabled = false;
+  bCtx.mozImageSmoothingEnabled = false;
+  bCtx.webkitImageSmoothingEnabled = false;
+  bCtx.msImageSmoothingEnabled = false;
+  bCtx.drawImage(smallCanvas, 0, 0, bigCanvas.width, bigCanvas.height);
+  
+  return bigCanvas.toDataURL();
+}
+
+function getLayerType(layerName) {
+  return layerName.startsWith('ql_') ? 'heat' : 'power';
+}
+
+function buildUrl() {
+  if (currentMode === 'individual') {
+    const model = document.getElementById('model-select').value;
+    const scenario = document.getElementById('scenario-individual').value;
+    return `${DATA_BASE}/individual/${model}_${scenario}.json`;
+  } else {
+    const stat = document.getElementById('stat-select').value;
+    const scenario = document.getElementById('scenario-ensemble').value;
+    return `${DATA_BASE}/ensemble/${scenario}_${stat}.json`;
+  }
+}
+
+function buildTitle() {
+  if (currentMode === 'individual') {
+    const m = document.getElementById('model-select').value;
+    const s = document.getElementById('scenario-individual').value;
+    return `Single BHE Analysis - ${m} Model (${s})`;
+  } else {
+    const s = document.getElementById('scenario-ensemble').value;
+    const stat = document.getElementById('stat-select').value;
+    const labels = { mean: 'Mean (μ)', p25: '25th Percentile', p50: 'Median (P50)', p75: '75th Percentile' };
+    return `BHE Ensemble - ${s.toUpperCase()} - ${labels[stat]}`;
+  }
+}
+
+async function loadData() {
+  const url = buildUrl();
+  showLoader('Loading dataset...');
+  try {
+    const r = await fetch(url);
+    if (!r.ok) { hideLoader(); showEmpty(); return; }
+    currentData = await r.json();
+    hideEmpty();
+    document.getElementById('map-title').textContent = buildTitle();
+    redrawAllLayers();
+    const e = currentData.extent;
+    map.fitBounds([[e.ymin, e.xmin], [e.ymax, e.xmax]]);
+    hideLoader();
+  } catch (e) {
+    console.error(e);
+    hideLoader();
+    showEmpty();
+  }
+}
+
+function redrawAllLayers() {
+  if (!currentData) return;
+  Object.values(leafletLayers).forEach(layer => map.removeLayer(layer));
+  leafletLayers = {};
+  const e = currentData.extent;
+  const bounds = [[e.ymin, e.xmin], [e.ymax, e.xmax]];
+  for (const layerName of activeLayers) {
+    const arr = currentData.layers[layerName];
+    if (!arr) continue;
+    const layerType = getLayerType(layerName);
+    const url = renderArrayToImageURL(arr, layerType);
+    const overlay = L.imageOverlay(url, bounds, { opacity: 0.95 });
+    overlay.addTo(map);
+    leafletLayers[layerName] = overlay;
+  }
+  if (germanyLayer) germanyLayer.bringToFront();
+}
+
+function updateLegendsAndSwatches() {
+  const heatColors = COLORMAPS[currentColormaps.heat];
+  const powerColors = COLORMAPS[currentColormaps.power];
+  document.getElementById('legend-bar-heat').style.background = `linear-gradient(to right, ${heatColors.join(', ')})`;
+  document.getElementById('legend-bar-power').style.background = `linear-gradient(to right, ${powerColors.join(', ')})`;
+  const heatMid = heatColors[Math.floor(heatColors.length / 2)];
+  const powerMid = powerColors[Math.floor(powerColors.length / 2)];
+  document.querySelectorAll('.swatch-heat').forEach(s => s.style.background = heatMid);
+  document.querySelectorAll('.swatch-power').forEach(s => s.style.background = powerMid);
+}
+
+map.on('click', function(e) {
+  if (!currentData || activeLayers.size === 0) return;
+  const { lat, lng } = e.latlng;
+  const ext = currentData.extent;
+  const cols = currentData.shape.cols;
+  const rows = currentData.shape.rows;
+  const pixelWidth = (ext.xmax - ext.xmin) / cols;
+  const pixelHeight = (ext.ymax - ext.ymin) / rows;
+  const x = Math.floor((lng - ext.xmin) / pixelWidth);
+  const y = Math.floor((ext.ymax - lat) / pixelHeight);
+  if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+  let html = `<div style="min-width:200px"><strong>${lat.toFixed(3)}°N, ${lng.toFixed(3)}°E</strong><br><br>`;
+  let any = false;
+  for (const layerName of activeLayers) {
+    const arr = currentData.layers[layerName];
+    if (!arr || !arr[y]) continue;
+    const v = arr[y][x];
+    if (v === null || isNaN(v)) continue;
+    const unit = layerName.startsWith('ql_') ? 'W/m' : 'W';
+    const labels = {
+      ql_Urban_50yr: 'Max Heat Ext (50yr)',
+      EnerUrb_50yr: 'Power (50yr)',
+      ql_UrbanRenew_50yr: 'Sust. Heat (50yr)',
+      EnerUrbRenew_50yr: 'Power non-renew',
+      ql_UrbanRenew_max_100yr: 'Max Sust. Heat (100yr)',
+      EnerUrbRenew_100yr: 'Power renew (100yr)'
+    };
+    html += `<div>${labels[layerName] || layerName}: <span class="popup-value">${v.toFixed(2)} ${unit}</span></div>`;
+    any = true;
+  }
+  if (!any) html += '<em>No data at this point</em>';
+  html += '</div>';
+  L.popup().setLatLng(e.latlng).setContent(html).openOn(map);
+});
+
+function showLoader(text) {
+  document.getElementById('loader-text').textContent = text || 'Loading...';
+  document.getElementById('loader').classList.add('active');
+}
+function hideLoader() { document.getElementById('loader').classList.remove('active'); }
+function showEmpty() { document.getElementById('empty-state').classList.remove('hidden'); }
+function hideEmpty() { document.getElementById('empty-state').classList.add('hidden'); }
+
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMode = tab.dataset.mode;
+    document.getElementById('individual-controls').style.display = currentMode === 'individual' ? '' : 'none';
+    document.getElementById('ensemble-controls').style.display = currentMode === 'ensemble' ? '' : 'none';
+    loadData();
+  });
+});
+
+['model-select', 'scenario-individual', 'stat-select', 'scenario-ensemble'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', loadData);
+});
+
+document.getElementById('cmap-heat').addEventListener('change', e => {
+  currentColormaps.heat = e.target.value;
+  updateLegendsAndSwatches();
+  redrawAllLayers();
+});
+document.getElementById('cmap-power').addEventListener('change', e => {
+  currentColormaps.power = e.target.value;
+  updateLegendsAndSwatches();
+  redrawAllLayers();
+});
+
+document.querySelectorAll('.layer-toggle input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', e => {
+    const layerName = e.target.dataset.layer;
+    if (e.target.checked) activeLayers.add(layerName);
+    else activeLayers.delete(layerName);
+    redrawAllLayers();
+  });
+});
+
+updateLegendsAndSwatches();
+loadGermanyBoundary();
+loadData();
+</script>
+
+</body>
+</html>
