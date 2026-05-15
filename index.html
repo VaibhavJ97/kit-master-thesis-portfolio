@@ -470,6 +470,15 @@ section {
 }
 .method-step h4 { font-size: 1.1rem; margin-bottom: 10px; font-weight: 600; }
 .method-step p { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.55; }
+.method-step .tools {
+  display: block;
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
 @media (max-width: 900px) {
   .methods-flow { grid-template-columns: 1fr 1fr; }
   .method-step { border-left: none; border-top: 1px solid var(--line); padding-top: 20px; }
@@ -491,6 +500,70 @@ section {
   max-width: 1400px;
   margin: 0 auto 50px;
   padding: 0 40px;
+}
+
+/* Behind the scenes section */
+.behind-section {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+.bts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  margin-top: 12px;
+}
+.bts-card {
+  padding: 28px 24px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.bts-card .bts-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.bts-card h4 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+.bts-card p {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+.bts-card .bts-tools {
+  display: block;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
+.bts-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 40px;
+  padding-bottom: 20px;
+}
+@media (max-width: 900px) {
+  .bts-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .bts-grid { grid-template-columns: 1fr; }
 }
 
 .explorer-container {
@@ -859,7 +932,7 @@ section {
 <!-- ============ THESIS HERO ============ -->
 <section class="thesis-hero fade-in">
   <div>
-    <div class="eyebrow">M.Sc. Thesis · KIT · 2025</div>
+    <div class="eyebrow">M.Sc. Thesis · KIT · 2026</div>
     <h1>Climate change & the future of <em>shallow geothermal</em> energy in Germany.</h1>
     <p class="lead">A semi-analytical model coupling CMIP6 climate projections with borehole heat exchanger physics, quantifying how a warming subsurface reshapes Germany's renewable heating potential through 2100.</p>
     <div class="hero-cta">
@@ -868,6 +941,7 @@ section {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
       </a>
       <a href="#methods" class="btn btn-ghost">View methodology</a>
+      <a href="https://github.com/VaibhavJ97/kit-master-thesis-portfolio" target="_blank" rel="noopener" class="btn btn-ghost">View source on GitHub</a>
     </div>
   </div>
 
@@ -971,7 +1045,7 @@ section {
 <!-- ============ KEY FINDINGS ============ -->
 <section id="findings">
   <div class="section-header">
-    <div class="eyebrow">§ 03 - Key results</div>
+    <div class="eyebrow">§ 02 - Key results</div>
     <h2>Warming substantially boosts <em>geothermal yield</em>.</h2>
     <p>Each degree of subsurface warming effectively substitutes ~4 metres of drilling depth, a measurable economic and physical lever.</p>
   </div>
@@ -1003,7 +1077,7 @@ section {
 <!-- ============ METHODS ============ -->
 <section id="methods">
   <div class="section-header">
-    <div class="eyebrow">§ 02 - Workflow</div>
+    <div class="eyebrow">§ 03 - Workflow</div>
     <h2>From climate model to <em>borehole physics</em>.</h2>
     <p>Four-stage pipeline integrating CMIP6 ensembles, FLS-based heat-transport modeling, and interactive geospatial visualization.</p>
   </div>
@@ -1013,21 +1087,25 @@ section {
       <div class="step-num">-> 01 / DATA</div>
       <h4>CMIP6 acquisition</h4>
       <p>8 GCMs from Google Earth Engine under SSP 2-4.5 & SSP 5-8.5; reprojected to EPSG:4326.</p>
+      <small class="tools">Python · Google Earth Engine · rasterio</small>
     </div>
     <div class="method-step">
       <div class="step-num">-> 02 / MODEL</div>
       <h4>FLS heat transport</h4>
       <p>Finite Line Source theory (Rivera 2017) with superposed surface boundary heating.</p>
+      <small class="tools">NumPy · SciPy · FLS theory</small>
     </div>
     <div class="method-step">
       <div class="step-num">-> 03 / SOLVE</div>
       <h4>Brent's iteration</h4>
       <p>Root-finding for sustainable extraction rate at minimum fluid temperature.</p>
+      <small class="tools">scipy.optimize · Brent's method</small>
     </div>
     <div class="method-step">
       <div class="step-num">-> 04 / VISUAL</div>
       <h4>Live JS rendering</h4>
       <p>Per-pixel data exported as JSON, rendered with Leaflet + chroma-js for live colormap switching.</p>
+      <small class="tools">JSON · Leaflet.js · chroma-js · Canvas</small>
     </div>
   </div>
 </section>
@@ -1205,6 +1283,47 @@ section {
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ BEHIND THE SCENES (how the page was built) ============ -->
+<section id="behind-the-scenes" class="behind-section">
+  <div class="section-header">
+    <div class="eyebrow">§ 05 - Behind the scenes</div>
+    <h2>How this <em>page</em> was built.</h2>
+    <p>The thesis itself was done in Python and Jupyter. This site that wraps it is a separate web-engineering project - so here's the short version of how it works under the hood.</p>
+  </div>
+
+  <div class="bts-grid">
+    <div class="bts-card">
+      <div class="bts-label">→ Data pipeline</div>
+      <h4>24 JSON files, 373 KB total</h4>
+      <p>The Python notebook exports per-pixel results to compact JSON (16 individual model files + 8 ensemble statistic files). No backend needed at runtime - the browser fetches only the JSON for the current selection.</p>
+      <small class="bts-tools">Python · NumPy · custom export script</small>
+    </div>
+    <div class="bts-card">
+      <div class="bts-label">→ Map rendering</div>
+      <h4>Live canvas + chroma-js</h4>
+      <p>JavaScript reads the JSON, renders each pixel to a small canvas via chroma-js color scales, then upscales to a larger image overlay with crisp-pixel rendering on Leaflet. Colormap switching is instant.</p>
+      <small class="bts-tools">JavaScript · Leaflet.js · chroma-js · Canvas API</small>
+    </div>
+    <div class="bts-card">
+      <div class="bts-label">→ Interactivity</div>
+      <h4>Click-to-query the array</h4>
+      <p>Clicking the map computes the corresponding pixel index from the data's geographic extent, reads the raw value, and shows the exact W/m or W in a popup. Layer toggles add and remove overlays without re-fetching.</p>
+      <small class="bts-tools">Leaflet events · Pixel index math</small>
+    </div>
+    <div class="bts-card">
+      <div class="bts-label">→ Hosting</div>
+      <h4>Vercel free tier</h4>
+      <p>Pure static site - no framework, no build step. Auto-deploys from GitHub on every push. The thesis page, fullscreen map, and embedded GeoChat widget all live in the same repo. Total cost: €0 / month.</p>
+      <small class="bts-tools">Vercel · GitHub Actions · auto-deploy</small>
+    </div>
+  </div>
+
+  <div class="bts-links">
+    <a href="https://github.com/VaibhavJ97/kit-master-thesis-portfolio" target="_blank" rel="noopener" class="btn btn-ghost">View source on GitHub</a>
+    <a href="files/Single_BHE_Analysis_GEE_CMIP6_Folium.ipynb" target="_blank" class="btn btn-ghost">Download the Python notebook</a>
   </div>
 </section>
 
