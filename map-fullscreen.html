@@ -35,48 +35,66 @@ body {
   overflow: hidden;
 }
 
-/* Top bar */
+/* Top bar - portfolio nav matching the other 4 sites */
 .topbar-fs {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 56px;
-  background: var(--paper);
-  border-bottom: 1px solid var(--line);
+  z-index: 1000;
   display: flex;
   align-items: center;
-  padding: 0 24px;
-  z-index: 1000;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: rgba(255, 250, 243, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
   gap: 24px;
 }
 .topbar-fs .brand {
   font-family: 'Fraunces', serif;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 600;
+  text-decoration: none;
   color: var(--ink);
-  text-decoration: none;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
-.topbar-fs .brand span { color: var(--accent); font-style: italic; font-weight: 400; }
-.topbar-fs .page-title {
-  font-size: 0.85rem;
-  color: var(--ink-soft);
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.05em;
-  margin-left: auto;
+.topbar-fs .brand span {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
 }
-.topbar-fs .close-btn {
-  background: var(--ink);
-  color: var(--bg);
-  padding: 8px 16px;
-  border-radius: 2px;
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
+.topbar-fs .portfolio-nav {
   display: flex;
+  gap: 28px;
   align-items: center;
-  gap: 8px;
-  transition: background 0.2s;
+  flex-wrap: wrap;
 }
-.topbar-fs .close-btn:hover { background: var(--accent); }
+.topbar-fs .portfolio-nav a {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.topbar-fs .portfolio-nav a:hover { color: var(--accent); }
+.topbar-fs .portfolio-nav a.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+@media (max-width: 820px) {
+  .topbar-fs {
+    padding: 10px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .topbar-fs .portfolio-nav { gap: 16px; font-size: 0.82rem; }
+}
 
 /* Layout */
 .fs-layout {
@@ -92,23 +110,6 @@ body {
   border-right: 1px solid var(--line);
   padding: 24px 24px 60px;
   overflow-y: auto;
-}
-.fs-sidebar h1 {
-  font-family: 'Fraunces', serif;
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.fs-sidebar h1 em {
-  color: var(--accent-deep);
-  font-style: italic;
-  font-weight: 300;
-}
-.fs-sidebar .lead {
-  font-size: 0.85rem;
-  color: var(--ink-soft);
-  margin-bottom: 20px;
-  line-height: 1.6;
 }
 
 /* Mode tabs */
@@ -345,7 +346,7 @@ body {
 }
 
 @media (max-width: 900px) {
-  .fs-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .fs-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; top: 100px; }
   .fs-sidebar { max-height: 50vh; padding: 16px; }
   body { overflow: auto; height: auto; }
 }
@@ -354,21 +355,17 @@ body {
 <body>
 
 <header class="topbar-fs">
-  <a href="../index.html" class="brand">Vaibhav <span>Jaiswal</span></a>
-  <span class="page-title">Map Explorer · Fullscreen</span>
-  <a href="index.html" class="close-btn">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-    Back to thesis
-  </a>
+  <a href="https://vaibhavj97.vercel.app" class="brand">Vaibhav <span>Jaiswal</span></a>
+  <nav class="portfolio-nav">
+    <a href="https://vaibhavj97.vercel.app">Home</a>
+    <a href="https://vaibhavj97-thesis.vercel.app" class="active">Master Thesis Project</a>
+    <a href="https://vaibhavj97-geochat.vercel.app">GeoChat</a>
+    <a href="https://vaibhavj97-bhe.vercel.app">BHE Recommender</a>
+  </nav>
 </header>
 
 <div class="fs-layout">
   <aside class="fs-sidebar">
-    <h1>Map <em>explorer</em></h1>
-    <p class="lead">Real BHE simulation output. Switch models, scenarios, colormaps, toggle layers - all instant.</p>
 
     <div class="mode-tabs">
       <div class="mode-tab active" data-mode="individual">
@@ -498,7 +495,7 @@ body {
 
     <div class="source-card">
       <p><strong>Tip:</strong> Click anywhere on the map to see exact values at that point.<br><br>
-      <strong>Source:</strong> <a href="https://github.com/VaibhavJ97/VaibhavJ97.github.io" target="_blank">GitHub repo</a> · <a href="../files/Single_BHE_Analysis_GEE_CMIP6_Folium.ipynb" target="_blank">Notebook</a></p>
+      <strong>Source:</strong> <a href="https://github.com/VaibhavJ97/kit-master-thesis-portfolio" target="_blank">GitHub repo</a> · <a href="files/Single_BHE_Analysis_GEE_CMIP6_Folium.ipynb" target="_blank">Notebook</a></p>
     </div>
   </aside>
 
