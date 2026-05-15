@@ -440,6 +440,81 @@ section {
   .abstract-text { font-size: 1.1rem; }
 }
 
+/* Cite this thesis section */
+.cite-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 40px 60px;
+}
+.cite-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  padding: 28px 32px;
+}
+.cite-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.cite-card h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 22px;
+}
+.cite-formats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.cite-format {
+  position: relative;
+}
+.cite-format-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cite-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin: 0;
+  min-height: 60px;
+}
+.cite-copy {
+  margin-top: 8px;
+  padding: 6px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cite-copy:hover { background: var(--accent); border-color: var(--accent); }
+.cite-copy.copied { background: #2d6b3a; border-color: #2d6b3a; }
+@media (max-width: 720px) {
+  .cite-section { padding: 30px 20px 40px; }
+  .cite-card { padding: 22px 20px; }
+  .cite-formats { grid-template-columns: 1fr; gap: 16px; }
+}
+
 /* ============ KEY FINDINGS ============ */
 .findings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); }
 .finding {
@@ -940,6 +1015,7 @@ section {
     <a href="https://vaibhavj97-thesis.vercel.app" class="active">Master Thesis Project</a>
     <a href="https://vaibhavj97-geochat.vercel.app">GeoChat</a>
     <a href="https://vaibhavj97-bhe.vercel.app">BHE Recommender</a>
+    <a href="https://github.com/VaibhavJ97" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub profile">GitHub</a>
   </nav>
 </header>
 
@@ -1021,6 +1097,33 @@ section {
     <div class="label">Abstract</div>
     <div class="abstract-text">
       <span class="drop">U</span>rban centers face increasing pressure to achieve carbon neutrality. This thesis develops a Python-based analytical model that couples CMIP6 climate projections with borehole heat exchanger physics, quantifying how a warming subsurface reshapes the geothermal heat-extraction potential across Germany under SSP 2-4.5 and SSP 5-8.5 scenarios, over 50-year and 100-year sustainable operating horizons.
+    </div>
+  </div>
+</section>
+
+<!-- ============ CITE THIS THESIS ============ -->
+<section id="cite" class="cite-section">
+  <div class="cite-card">
+    <div class="cite-label">→ Cite this work</div>
+    <h3>If you reference this thesis</h3>
+    <div class="cite-formats">
+      <div class="cite-format">
+        <div class="cite-format-label">APA</div>
+        <pre class="cite-text" id="cite-apa">Jaiswal, V. (2026). Impact of Climate Change on the Geothermal Potential of Closed Systems Using GIS and Python (Master's thesis). Karlsruhe Institute of Technology (KIT).</pre>
+        <button class="cite-copy" data-target="cite-apa">Copy</button>
+      </div>
+      <div class="cite-format">
+        <div class="cite-format-label">BibTeX</div>
+        <pre class="cite-text" id="cite-bibtex">@mastersthesis{jaiswal2026geothermal,
+  title  = {Impact of Climate Change on the Geothermal Potential of Closed Systems Using GIS and Python},
+  author = {Jaiswal, Vaibhav},
+  year   = {2026},
+  school = {Karlsruhe Institute of Technology (KIT)},
+  type   = {M.Sc. Thesis},
+  url    = {https://vaibhavj97-thesis.vercel.app}
+}</pre>
+        <button class="cite-copy" data-target="cite-bibtex">Copy</button>
+      </div>
     </div>
   </div>
 </section>
@@ -1346,7 +1449,7 @@ section {
   <div class="footer-inner">
     <div>
       <h4>Let's connect</h4>
-      <p>Questions about the CMIP6 modeling pipeline, the BHE physics, or the climate scenarios? Open to discussions on research, data, or collaborations.</p>
+      <p>Questions about the CMIP6 modeling pipeline, the BHE physics, the JSON-based map architecture, or anything else on this page? Open to discussions on research, data engineering, or collaborations. Currently open to roles in Python, web development, data engineering, and AI integration.</p>
     </div>
     <div>
       <h4>Navigate</h4>
@@ -1799,6 +1902,31 @@ loadData();
       if (e.key === 'Escape' && isOpen) close();
     });
   })();
+</script>
+
+<!-- Cite this thesis: copy button handler -->
+<script>
+(function(){
+  document.querySelectorAll('.cite-copy').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const targetId = btn.dataset.target;
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      try {
+        await navigator.clipboard.writeText(el.textContent);
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 1500);
+      } catch (err) {
+        console.warn('Copy failed:', err);
+      }
+    });
+  });
+})();
 </script>
 
 </body>
