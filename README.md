@@ -14,8 +14,22 @@ The thesis page is a live interactive companion to my M.Sc. thesis at the Karlsr
 - **Author**: Vaibhav Jaiswal
 - **Institution**: Karlsruhe Institute of Technology (KIT), M.Sc. Applied Geosciences
 - **Graduated**: February 2026
-- **Grade**: 2.5
+- **Grade**: 2,5
 - **Supervisors**: PD Dr. Kathrin Menberg, Dr. Susanne Benz
+
+## How this was built - AI-pair-programming disclosure
+
+This project was built with **AI-assisted development workflows** at every stage:
+
+**Python notebook (data pipeline + scientific modeling)**: ChatGPT and Anthropic Claude were my pair-programmers for code structure, numerical methods (Brent's method via scipy.optimize), data engineering, and refactoring. The MATLAB-to-Python migration, the JSON export pipeline, and the iteration over 24 output files were all AI-accelerated.
+
+**Web app (interactive maps + chatbot integration)**: Claude was the primary collaborator for the Leaflet.js map rendering, custom canvas optimization for 5 km grid performance, and the JSON pipeline architecture.
+
+**What was mine**: the thesis research question, methodology choices (MFLS coupling, SIA 384/6 standard, parameter selection), the supervisor-guided scientific interpretation, every architecture decision, every line review, and the final deployment.
+
+**What AI accelerated**: code generation, debugging, refactoring, documentation, and "what's the cleanest way to do X" iteration.
+
+The thesis itself was written by me. The supporting tools were built with AI as a pair-programmer.
 
 ## Tech stack
 
@@ -25,7 +39,9 @@ The thesis page is a live interactive companion to my M.Sc. thesis at the Karlsr
 | Frontend | Vanilla HTML, CSS, JavaScript (no framework) |
 | Data | 24 pre-computed JSON files (~373 KB total) exported from a Jupyter notebook |
 | Source data | Google Earth Engine for CMIP6, MFLS solver in Python |
+| Notebook stack | Python (scipy.optimize, numpy, pandas, geopandas, rasterio, folium) |
 | Hosting | Vercel |
+| Development | AI-pair-programming (Claude, ChatGPT, Copilot) with full manual review |
 
 ## How it works
 
