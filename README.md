@@ -6,7 +6,7 @@
 
 ## What this is
 
-The thesis page is a live interactive companion to my M.Sc. thesis at the Karlsruhe Institute of Technology. It renders 5 km gridded data over Germany showing sustainable heat-extraction rates under two climate scenarios (SSP 2-4.5 and SSP 5-8.5) and three time horizons (50 years, 100 years depleting, 100 years sustainable).
+The thesis page is a live interactive companion to my M.Sc. thesis at the Karlsruhe Institute of Technology. It renders 5 km gridded data over Germany showing sustainable heat-extraction rates under two climate scenarios (SSP 2-4.5 and SSP 5-8.5) and three time horizons (50 years, 50 years depleting, 100 years sustainable).
 
 ## Thesis info
 
