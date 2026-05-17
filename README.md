@@ -43,6 +43,25 @@ The thesis itself was written by me. The supporting tools were built with AI as 
 | Hosting | Vercel |
 | Development | AI-pair-programming (Claude, ChatGPT, Copilot) with full manual review |
 
+## Architecture
+
+```
+Jupyter notebook (offline)
+  ├── Pull CMIP6 climate data from Google Earth Engine
+  ├── Run MFLS solver (scipy.optimize.brentq) for each 5 km pixel
+  ├── For each pixel × scenario × time horizon → maximum sustainable q
+  └── Export 24 JSON files (~373 KB total)
+        ↓
+Static web page (browser only, no backend)
+  ├── Fetch JSON for current selection
+  ├── Render each pixel via chroma-js color scale onto canvas
+  ├── Overlay canvas on Leaflet map with pixel-perfect rendering
+  └── Click events query the underlying array and show exact value
+        ↓
+Embedded GeoChat widget
+  └── iframe → vaibhavj97-geochat.vercel.app (separate repo)
+```
+
 ## How it works
 
 1. The Jupyter notebook runs the **Moving Finite Line Source (MFLS)** model from Rivera et al. (2017), coupling 8 CMIP6 GCMs (BCC, CanESM, GFDL, GISS, HadGEM, IPSL, MIROC, MPI) with standard BHE parameters (150 m depth, lambda = 2.5 W/m.K, Rtb = 0.15 m.K/W, Tmin = -1.5 deg C per SIA 384/6).
@@ -70,6 +89,24 @@ The thesis itself was written by me. The supporting tools were built with AI as 
 - High-yield regions: southwestern Germany, Berlin, Munich, Frankfurt, Rhine-Ruhr metropolitan area
 - Each 1 deg C of additional ground warming reduces required borehole depth by roughly **4 m** for the same heating capacity
 
+## Citations and references
+
+If you reference this work, please cite the thesis:
+
+```
+Jaiswal, V. (2026). Impact of Climate Change on the Geothermal Potential of
+Closed Systems Using GIS and Python. M.Sc. Thesis, Karlsruhe Institute of
+Technology, Germany. Supervisors: PD Dr. Kathrin Menberg, Dr. Susanne Benz.
+```
+
+BibTeX is also available on the live site under "Cite this work".
+
+**Underlying methods and standards referenced in the thesis**:
+
+- Rivera, J. A., Blum, P., & Bayer, P. (2017). *Increased ground temperatures in urban areas: Estimation of the technical geothermal potential.* Renewable Energy, 103, 388-400.
+- SIA 384/6 (Swiss Society of Engineers and Architects): Standard for ground-source heat exchanger systems. Minimum fluid temperature constraint Tmin = -1.5 deg C.
+- CMIP6 (Coupled Model Intercomparison Project Phase 6): 8 General Circulation Models accessed via Google Earth Engine. Scenarios SSP 2-4.5 and SSP 5-8.5.
+
 ## Run locally
 
 ```bash
@@ -77,6 +114,26 @@ git clone https://github.com/VaibhavJ97/kit-master-thesis-portfolio.git
 cd kit-master-thesis-portfolio
 python3 -m http.server 8000
 # Open http://localhost:8000
+```
+
+To re-run the Python notebook (`Single_BHE_Analysis_GEE_CMIP6_Folium.ipynb`), you'll need a Google Earth Engine account and Python 3.9+ with: `numpy`, `scipy`, `pandas`, `geopandas`, `rasterio`, `folium`, `earthengine-api`.
+
+## Project structure
+
+```
+.
+├── index.html                              # Main thesis page
+├── map-fullscreen.html                     # Standalone fullscreen map explorer
+├── og-preview.png                          # 1200x630 social-media preview
+├── assets/
+│   ├── style.css                           # Styles
+│   └── map-app.js                          # Leaflet + canvas rendering
+├── data/
+│   ├── *_individual.json (16 files)        # Per-GCM × per-scenario results
+│   └── *_ensemble.json (8 files)           # Ensemble mean / median statistics
+├── files/
+│   └── Single_BHE_Analysis_*.ipynb         # Source Jupyter notebook
+└── README.md
 ```
 
 ## Limitations
@@ -89,10 +146,25 @@ python3 -m http.server 8000
 
 See the thesis PDF for full details.
 
+## Disclaimer
+
+This work is research output, not engineering design. The numbers reflect ensemble-averaged climate projections at 5 km resolution and standard BHE parameters. Real-world borehole design must consider local geology, groundwater flow, regulatory permits, contractor pricing, and equipment specifications. Treat results as a first-pass screening estimate, not a substitute for site-specific engineering analysis. CMIP6 climate projections carry inherent uncertainty; SSP scenarios are pathways, not predictions.
+
 ## License
 
-MIT for the code. Data follows CMIP6 fair-use terms.
+MIT for the code. Data follows CMIP6 fair-use terms. Thesis itself is the intellectual property of the author and the Karlsruhe Institute of Technology.
 
-## About me
+## About me / Contact
 
-[Portfolio](https://vaibhavj97.vercel.app) · [GitHub profile](https://github.com/VaibhavJ97) · [LinkedIn](https://www.linkedin.com/in/vaibhavgeo/) · [Email](mailto:vaibhavjaiswal1234@gmail.com)
+- **Email**: vaibhavjaiswal1234@gmail.com
+- **Portfolio**: [vaibhavj97.vercel.app](https://vaibhavj97.vercel.app)
+- **LinkedIn**: [linkedin.com/in/vaibhavgeo](https://www.linkedin.com/in/vaibhavgeo/)
+- **GitHub**: [github.com/VaibhavJ97](https://github.com/VaibhavJ97)
+- **Book a 30-min call**: [calendly.com/vaibhavjaiswal1234/30min](https://calendly.com/vaibhavjaiswal1234/30min)
+- **Location**: Karlsruhe, Germany
+
+### My other repos
+
+- [Portfolio homepage](https://github.com/VaibhavJ97/VaibhavJ97.github.io) - the front door
+- [GeoChat](https://github.com/VaibhavJ97/geochat) - AI chatbot grounded in this thesis
+- [BHE Recommender](https://github.com/VaibhavJ97/bhe-recommender) - interactive feasibility tool built on this thesis data
