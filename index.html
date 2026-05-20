@@ -1195,69 +1195,6 @@ loadGermanyBoundary();
 loadData();
 </script>
 
-<!-- ============ FLOATING GEOCHAT WIDGET ============ -->
-<button id="geochat-fab" aria-label="Open GeoChat" title="Ask GeoChat about this thesis">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-  <span>Ask GeoChat</span>
-</button>
-
-<div id="geochat-panel" aria-hidden="true">
-  <div class="geochat-panel-header">
-    <div class="geochat-panel-title">
-      <span class="dot"></span>
-      GeoChat
-      <em>about this thesis</em>
-    </div>
-    <div class="geochat-panel-actions">
-      <a href="https://vaibhavj97-geochat.vercel.app" target="_blank" rel="noopener" class="geochat-expand" title="Open in full window">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
-      </a>
-      <button class="geochat-close" aria-label="Close GeoChat">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-  </div>
-  <iframe id="geochat-iframe" title="GeoChat" loading="lazy" src=""></iframe>
-</div>
-
-<script>
-  (function() {
-    const fab = document.getElementById('geochat-fab');
-    const panel = document.getElementById('geochat-panel');
-    const iframe = document.getElementById('geochat-iframe');
-    const closeBtn = panel.querySelector('.geochat-close');
-    const GEOCHAT_URL = 'https://vaibhavj97-geochat.vercel.app/?embed=1';
-    let isOpen = false;
-    let iframeLoaded = false;
-
-    function open() {
-      if (!iframeLoaded) {
-        iframe.src = GEOCHAT_URL;
-        iframeLoaded = true;
-      }
-      panel.classList.add('open');
-      panel.setAttribute('aria-hidden', 'false');
-      fab.classList.add('hidden');
-      isOpen = true;
-    }
-
-    function close() {
-      panel.classList.remove('open');
-      panel.setAttribute('aria-hidden', 'true');
-      fab.classList.remove('hidden');
-      isOpen = false;
-    }
-
-    fab.addEventListener('click', open);
-    closeBtn.addEventListener('click', close);
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isOpen) close();
-    });
-  })();
-</script>
-
 <!-- Cite this thesis: copy button handler -->
 <script>
 (function(){
@@ -1322,32 +1259,6 @@ loadData();
     });
   })();
 </script>
-
-<!-- Cite this thesis: copy button handler -->
-<script>
-(function(){
-  document.querySelectorAll('.cite-copy').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const targetId = btn.dataset.target;
-      const el = document.getElementById(targetId);
-      if (!el) return;
-      try {
-        await navigator.clipboard.writeText(el.textContent);
-        const originalText = btn.textContent;
-        btn.textContent = 'Copied';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.classList.remove('copied');
-        }, 1500);
-      } catch (err) {
-        console.warn('Copy failed:', err);
-      }
-    });
-  });
-})();
-</script>
-
 
 <!-- Vercel Web Analytics -->
 <script>
