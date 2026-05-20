@@ -273,51 +273,153 @@ footer { padding: 80px 0 36px; background: var(--ink); color: var(--bg); border-
   <div class="thesis-hero-visual">
     <svg class="thesis-hero-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#e3ebe5"/>
-          <stop offset="40%" stop-color="#9ec0a7"/>
-          <stop offset="100%" stop-color="#1f4a37"/>
-        </linearGradient>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f7f5f0"/>
-          <stop offset="100%" stop-color="#e3ebe5"/>
+          <stop offset="0%" stop-color="#d8e6ee"/>
+          <stop offset="100%" stop-color="#a4c0d4"/>
+        </linearGradient>
+        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c5d8c8"/>
+          <stop offset="22%" stop-color="#9bbf9f"/>
+          <stop offset="45%" stop-color="#a8a368"/>
+          <stop offset="70%" stop-color="#c4823a"/>
+          <stop offset="100%" stop-color="#9a3f15"/>
+        </linearGradient>
+        <linearGradient id="cold-pipe" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5a8fb0"/>
+          <stop offset="100%" stop-color="#3d6f8c"/>
+        </linearGradient>
+        <linearGradient id="hot-pipe" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#a04a1e"/>
+          <stop offset="100%" stop-color="#d97a3f"/>
+        </linearGradient>
+        <linearGradient id="ubend" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3d6f8c"/>
+          <stop offset="50%" stop-color="#7a5a3a"/>
+          <stop offset="100%" stop-color="#a04a1e"/>
         </linearGradient>
         <radialGradient id="heat" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stop-color="#2d6a4f" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#2d6a4f" stop-opacity="0"/>
+          <stop offset="0%" stop-color="#d97a3f" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#d97a3f" stop-opacity="0"/>
         </radialGradient>
-        <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-          <path d="M 0 0 L 6 3 L 0 6 z" fill="#2d6a4f"/>
+        <marker id="arrow-cold" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M 0 0 L 6 3 L 0 6 z" fill="#3d6f8c"/>
+        </marker>
+        <marker id="arrow-hot" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M 0 0 L 6 3 L 0 6 z" fill="#a04a1e"/>
         </marker>
       </defs>
+
+      <!-- Sky (cold) -->
       <rect x="0" y="0" width="500" height="180" fill="url(#sky)"/>
-      <circle cx="380" cy="90" r="32" fill="#2d6a4f" opacity="0.85"/>
-      <circle cx="380" cy="90" r="48" fill="#2d6a4f" opacity="0.15"/>
+
+      <!-- Sun (top right) -->
+      <g>
+        <circle cx="425" cy="75" r="26" fill="#fcd968" opacity="0.14"/>
+        <circle cx="425" cy="75" r="18" fill="#fcd968" opacity="0.38"/>
+        <circle cx="425" cy="75" r="12" fill="#fcd968"/>
+        <g stroke="#fcd968" stroke-width="1.8" stroke-linecap="round" opacity="0.55">
+          <line x1="425" y1="42" x2="425" y2="50"/>
+          <line x1="425" y1="100" x2="425" y2="108"/>
+          <line x1="392" y1="75" x2="400" y2="75"/>
+          <line x1="450" y1="75" x2="458" y2="75"/>
+          <line x1="402" y1="52" x2="408" y2="58"/>
+          <line x1="442" y1="92" x2="448" y2="98"/>
+          <line x1="402" y1="98" x2="408" y2="92"/>
+          <line x1="442" y1="58" x2="448" y2="52"/>
+        </g>
+      </g>
+
+      <!-- Earth (green at top, warm/hot at bottom) -->
       <rect x="0" y="180" width="500" height="320" fill="url(#ground)"/>
+
+      <!-- Depth grid lines -->
       <line x1="0" y1="240" x2="500" y2="240" stroke="#1f4a37" stroke-width="0.5" opacity="0.4" stroke-dasharray="2,4"/>
-      <line x1="0" y1="320" x2="500" y2="320" stroke="#1f4a37" stroke-width="0.5" opacity="0.4" stroke-dasharray="2,4"/>
-      <line x1="0" y1="400" x2="500" y2="400" stroke="#1f4a37" stroke-width="0.5" opacity="0.4" stroke-dasharray="2,4"/>
-      <ellipse cx="250" cy="350" rx="120" ry="160" fill="url(#heat)" class="heat-pulse"/>
-      <rect x="246" y="180" width="8" height="280" fill="#15201a" rx="2"/>
-      <path d="M 248 190 Q 248 460 252 460 Q 252 190 252 190" stroke="#2d6a4f" stroke-width="1.5" fill="none"/>
-      <circle cx="250" cy="180" r="6" fill="#15201a"/>
-      <circle cx="250" cy="180" r="3" fill="#2d6a4f"/>
-      <g font-family="IBM Plex Mono, monospace" font-size="9" fill="#1f4a37" opacity="0.7">
+      <line x1="0" y1="320" x2="500" y2="320" stroke="#7a5a3a" stroke-width="0.5" opacity="0.4" stroke-dasharray="2,4"/>
+      <line x1="0" y1="400" x2="500" y2="400" stroke="#9a3f15" stroke-width="0.5" opacity="0.5" stroke-dasharray="2,4"/>
+
+      <!-- Heat halo around U-bend (warm orange) -->
+      <ellipse cx="250" cy="460" rx="150" ry="80" fill="url(#heat)" class="heat-pulse"/>
+
+      <!-- House (left side, above ground) -->
+      <g>
+        <!-- Roof -->
+        <path d="M 78 142 L 130 96 L 182 142 Z" fill="#a04a1e" stroke="#7a2e10" stroke-width="0.6"/>
+        <!-- Body -->
+        <rect x="86" y="140" width="88" height="40" fill="#e8d8c0" stroke="#1f4a37" stroke-width="0.8"/>
+        <!-- Door -->
+        <rect x="118" y="158" width="20" height="22" fill="#4a3b2a"/>
+        <circle cx="134" cy="170" r="0.8" fill="#fcd968"/>
+        <!-- Left window -->
+        <rect x="94" y="148" width="14" height="14" fill="#a4c0d4" stroke="#1f4a37" stroke-width="0.4"/>
+        <line x1="94" y1="155" x2="108" y2="155" stroke="#1f4a37" stroke-width="0.3"/>
+        <line x1="101" y1="148" x2="101" y2="162" stroke="#1f4a37" stroke-width="0.3"/>
+        <!-- Right window -->
+        <rect x="150" y="148" width="14" height="14" fill="#a4c0d4" stroke="#1f4a37" stroke-width="0.4"/>
+        <line x1="150" y1="155" x2="164" y2="155" stroke="#1f4a37" stroke-width="0.3"/>
+        <line x1="157" y1="148" x2="157" y2="162" stroke="#1f4a37" stroke-width="0.3"/>
+        <!-- Chimney -->
+        <rect x="156" y="102" width="8" height="22" fill="#7a2e10"/>
+        <!-- Smoke -->
+        <circle cx="160" cy="94" r="3.5" fill="#d8e6ee" opacity="0.75"/>
+        <circle cx="163" cy="86" r="2.5" fill="#d8e6ee" opacity="0.5"/>
+      </g>
+
+      <!-- Connector from house to heat pump -->
+      <line x1="174" y1="170" x2="222" y2="170" stroke="#15201a" stroke-width="1.2" opacity="0.7"/>
+
+      <!-- Heat pump unit (cream/silver, not black) -->
+      <g>
+        <text x="250" y="142" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="#1f4a37" letter-spacing="0.4">HEAT PUMP</text>
+        <rect x="222" y="148" width="56" height="32" fill="#e8e3d8" stroke="#1f4a37" stroke-width="1" rx="3"/>
+        <line x1="228" y1="156" x2="272" y2="156" stroke="#9aa39c" stroke-width="0.5"/>
+        <line x1="228" y1="161" x2="272" y2="161" stroke="#9aa39c" stroke-width="0.5"/>
+        <line x1="228" y1="166" x2="272" y2="166" stroke="#9aa39c" stroke-width="0.5"/>
+        <circle cx="268" cy="174" r="2" fill="#2d6a4f"/>
+      </g>
+
+      <!-- Two pipes -->
+      <rect x="234" y="180" width="8" height="250" fill="url(#cold-pipe)" rx="2"/>
+      <rect x="258" y="180" width="8" height="250" fill="url(#hot-pipe)" rx="2"/>
+
+      <!-- U-bend (gradient cold->hot showing the heat exchange) -->
+      <path d="M 238 430 C 238 470, 262 470, 262 430" stroke="url(#ubend)" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+      <!-- Cold-water flow arrows (down, left pipe) -->
+      <g stroke="#3d6f8c" stroke-width="1.4" fill="none">
+        <path d="M 238 215 L 238 238" marker-end="url(#arrow-cold)"/>
+        <path d="M 238 280 L 238 303" marker-end="url(#arrow-cold)"/>
+        <path d="M 238 350 L 238 373" marker-end="url(#arrow-cold)"/>
+        <path d="M 238 400 L 238 423" marker-end="url(#arrow-cold)"/>
+      </g>
+      <!-- Hot-water flow arrows (up, right pipe) -->
+      <g stroke="#a04a1e" stroke-width="1.4" fill="none">
+        <path d="M 262 423 L 262 400" marker-end="url(#arrow-hot)"/>
+        <path d="M 262 373 L 262 350" marker-end="url(#arrow-hot)"/>
+        <path d="M 262 303 L 262 280" marker-end="url(#arrow-hot)"/>
+        <path d="M 262 238 L 262 215" marker-end="url(#arrow-hot)"/>
+      </g>
+
+      <!-- Depth labels -->
+      <g font-family="IBM Plex Mono, monospace" font-size="9" fill="#1f4a37" opacity="0.75">
         <text x="20" y="245">0 m</text>
-        <text x="20" y="325">50 m</text>
-        <text x="20" y="405">100 m</text>
+        <text x="20" y="325" fill="#7a5a3a">50 m</text>
+        <text x="20" y="405" fill="#9a3f15">100 m</text>
       </g>
+
+      <!-- Temperature labels (right side) -->
       <g font-family="IBM Plex Mono, monospace" font-size="10" fill="#1f4a37">
-        <text x="320" y="230">+2.5°C</text>
-        <text x="320" y="320">+1.7°C</text>
-        <text x="320" y="410">+0.8°C</text>
+        <text x="330" y="245">+0.8°C</text>
+        <text x="330" y="325" fill="#7a5a3a">+1.7°C</text>
+        <text x="330" y="405" fill="#9a3f15">+2.5°C</text>
       </g>
-      <g stroke="#2d6a4f" stroke-width="1.2" fill="none" opacity="0.7">
-        <path d="M 100 200 L 100 230" marker-end="url(#arrow)"/>
-        <path d="M 160 200 L 160 230" marker-end="url(#arrow)"/>
-        <path d="M 340 200 L 340 230" marker-end="url(#arrow)"/>
-        <path d="M 400 200 L 400 230" marker-end="url(#arrow)"/>
+
+      <!-- Cold-in / Hot-out labels -->
+      <g font-family="IBM Plex Mono, monospace" font-size="8" font-weight="600" letter-spacing="0.5">
+        <text x="172" y="200" fill="#3d6f8c">COLD WATER IN</text>
+        <text x="280" y="200" fill="#a04a1e">HOT WATER OUT</text>
       </g>
+
+      <!-- Title -->
       <g font-family="Newsreader, serif" font-size="11" fill="#15201a" font-style="italic" opacity="0.6">
         <text x="20" y="40">Borehole heat exchanger</text>
         <text x="20" y="56" font-size="9" font-style="normal" font-family="IBM Plex Mono">downstream Germany subsurface</text>
