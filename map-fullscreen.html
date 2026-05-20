@@ -96,10 +96,43 @@ nav a:hover, nav .active { color: var(--accent); }
 .leaflet-popup-content-wrapper { border-radius: 6px; }
 .leaflet-popup-content { font-family: var(--font-sans); font-size: 13px; line-height: 1.5; }
 
+/* ============ RESPONSIVE ============ */
 @media (max-width: 900px) {
-  .fs-layout { grid-template-columns: 1fr; grid-template-rows: 320px 1fr; }
-  .fs-sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+  .fs-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .fs-sidebar { border-right: none; border-bottom: 1px solid var(--line); max-height: 45vh; }
+}
+
+@media (max-width: 768px) {
+  :root { --gutter: 18px; }
   nav ul { display: none; }
+  .nav-github span { display: none; }
+  .nav-github { padding: 7px 10px; }
+  .nav-inner { padding: 10px var(--gutter); }
+  .logo { font-size: 16px; }
+  .fs-sidebar { padding: 14px 16px; max-height: 42vh; }
+  .mode-tabs { padding: 3px; margin-bottom: 14px; }
+  .mode-tab { padding: 8px 10px; font-size: 10px; }
+  .mode-tab small { font-size: 8.5px; }
+  .control-group { margin-bottom: 12px; }
+  .control-group label { font-size: 10px; }
+  .control-group select { padding: 8px 10px; font-size: 12.5px; }
+  .layer-toggles { padding: 12px; margin: 14px 0; }
+  .layer-toggle { font-size: 12px; }
+  .legend-mini { padding: 9px 11px; }
+  .source-card { padding: 9px 11px; }
+  .source-card p { font-size: 11px; }
+  .map-title-overlay { font-size: 10px; padding: 6px 10px; top: 10px; }
+}
+
+@media (max-width: 520px) {
+  .fs-sidebar { max-height: 40vh; padding: 12px 14px; }
+  .mode-tabs { margin-bottom: 10px; }
+  .mode-tab { padding: 7px 8px; font-size: 9.5px; }
+  .control-group { margin-bottom: 10px; }
+  .layer-toggle { padding: 4px 0; font-size: 11.5px; }
+  .swatch { width: 11px; height: 11px; }
+  .legend-mini h5 { font-size: 9px; }
+  .legend-mini .vals { font-size: 9px; }
 }
 </style>
 </head>
