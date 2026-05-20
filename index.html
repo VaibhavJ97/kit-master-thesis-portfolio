@@ -39,8 +39,8 @@
   --max: 1200px; --gutter: 28px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 a { color: inherit; text-decoration: none; transition: color 0.2s; }
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
 
@@ -54,6 +54,13 @@ nav a:hover, nav .active { color: var(--accent); }
 .nav-github { font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border: 1px solid var(--line-strong); border-radius: 4px; transition: all 0.2s; }
 .nav-github:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .nav-github svg { width: 14px; height: 14px; }
+
+/* Hamburger button */
+.nav-toggle { display: none; background: none; border: 1px solid var(--line-strong); border-radius: 4px; padding: 8px 9px; cursor: pointer; flex-direction: column; gap: 4px; width: 36px; height: 36px; align-items: center; justify-content: center; }
+.nav-toggle span { display: block; width: 18px; height: 2px; background: var(--ink); border-radius: 1px; transition: transform 0.2s, opacity 0.2s; }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
 /* ============ HERO ============ */
 .thesis-hero { max-width: var(--max); margin: 0 auto; padding: 80px var(--gutter) 60px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: center; }
@@ -232,6 +239,14 @@ footer { padding: 80px 0 36px; background: var(--ink); color: var(--bg); border-
 /* ============ RESPONSIVE: large mobile (≤768px) ============ */
 @media (max-width: 768px) {
   :root { --gutter: 22px; }
+  .nav-toggle { display: inline-flex; }
+  #primary-nav { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--line); padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  #primary-nav.open { max-height: 320px; padding: 8px 0 16px; }
+  #primary-nav ul { display: flex; flex-direction: column; gap: 0; padding: 0 var(--gutter); }
+  #primary-nav li { border-bottom: 1px solid var(--line); }
+  #primary-nav li:last-child { border-bottom: none; }
+  #primary-nav a { display: block; padding: 14px 0; font-size: 13px; }
+  .nav-inner { position: relative; }
   section { padding: 56px 0; }
   .thesis-hero { padding: 48px var(--gutter) 40px; gap: 28px; }
   .thesis-hero h1 { margin-bottom: 20px; }
@@ -261,7 +276,6 @@ footer { padding: 80px 0 36px; background: var(--ink); color: var(--bg); border-
 /* ============ RESPONSIVE: small mobile (≤520px) ============ */
 @media (max-width: 520px) {
   :root { --gutter: 18px; }
-  nav ul { display: none; }
   .nav-github span { display: none; }
   .nav-github { padding: 7px 10px; }
   section { padding: 44px 0; }
@@ -298,7 +312,7 @@ footer { padding: 80px 0 36px; background: var(--ink); color: var(--bg); border-
 <header class="topbar">
   <div class="nav-inner">
     <div class="logo">Vaibhav <span class="logo-accent">Jaiswal</span></div>
-    <nav>
+    <nav id="primary-nav">
       <ul>
         <li><a href="https://vaibhavj97.vercel.app">Home</a></li>
         <li><a href="https://vaibhavj97-thesis.vercel.app" class="active">Master Thesis</a></li>
@@ -306,6 +320,9 @@ footer { padding: 80px 0 36px; background: var(--ink); color: var(--bg); border-
         <li><a href="https://vaibhavj97-bhe.vercel.app">BHE Recommender</a></li>
       </ul>
     </nav>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
     <a href="https://github.com/VaibhavJ97" target="_blank" rel="noopener" class="nav-github">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
       <span>GitHub</span>
@@ -1320,6 +1337,27 @@ loadData();
       if (e.key === 'Escape' && isOpen) close();
     });
   })();
+</script>
+
+<!-- Hamburger menu toggle -->
+<script>
+(function() {
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('primary-nav');
+  if (!toggle || !nav) return;
+  toggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+  });
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open menu');
+    });
+  });
+})();
 </script>
 
 <!-- Vercel Web Analytics -->
