@@ -1230,12 +1230,15 @@ loadData();
     const panel = document.getElementById('chat-panel');
     const closeBtn = document.getElementById('chat-panel-close');
     const iframe = document.getElementById('chat-iframe');
+    const GEOCHAT_URL = 'https://vaibhavj97-geochat.vercel.app/?embed=1';
     let isOpen = false;
+    let iframeLoaded = false;
 
     function open() {
       // Lazy-load iframe src on first open
-      if (!iframe.src) {
-        iframe.src = 'https://vaibhavj97-geochat.vercel.app/?embed=1';
+      if (!iframeLoaded) {
+        iframe.src = GEOCHAT_URL;
+        iframeLoaded = true;
       }
       panel.classList.add('open');
       panel.setAttribute('aria-hidden', 'false');
